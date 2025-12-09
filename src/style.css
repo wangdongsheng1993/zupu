@@ -1,0 +1,21 @@
+:root {
+  --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --bg-parchment: #f4ecd8; /* Fallback flat color */
+  --text-primary: #3b2e2a;
+  --gold-primary: #cba26c;
+  --gold-dark: #8b6b43;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-parchment);
+  /* Add a subtle noise or texture if possible via CSS */
+  background-image: 
+    radial-gradient(at 10% 10%, rgba(0,0,0,0.03) 0%, transparent 50%),
+    radial-gradient(at 90% 90%, rgba(0,0,0,0.03) 0%, transparent 50%);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+}
