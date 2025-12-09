@@ -448,25 +448,49 @@ const handleCollapse = (evt) => {
     }
 };
 
-// Add Node Functionality
+const showModal = ref(false);
+const formData = ref({
+    label: '',
+    tag: '',
+    desc: ''
+});
+
+// Add Node Functionality (Open Modal)
 const addNode = () => {
     if (!selectedNode.value) {
         alert("请先选择一个上级节点 (Please select a parent node first)");
         return;
     }
     
+    // Reset form
+    formData.value = {
+        label: '新祠堂',
+        tag: '新入',
+        desc: ''
+    };
+    showModal.value = true;
+}
+
+const confirmAddNode = () => {
+    if (!formData.value.label) {
+        alert("请输入名称");
+        return;
+    }
+
     const newNode = {
         id: `n-${Date.now()}`,
-        label: '新增祠堂',
-        tag: '新入',
-        desc: '新增节点描述',
+        label: formData.value.label,
+        tag: formData.value.tag,
+        desc: formData.value.desc || ' ', // ensure desc exists for spacing
         children: []
     };
     
     graph.addChild(newNode, selectedNode.value);
     
-    // Explicitly refresh the parent node so it renders the new collapse button (since it now has children)
+    // Explicitly refresh the parent node so it renders the new collapse button
     graph.refreshItem(selectedNode.value);
+    
+    showModal.value = false;
 }
 
 </script>
@@ -486,6 +510,33 @@ const addNode = () => {
             <span>申请<br>加入</span>
         </div>
       </button>
+  </div>
+  
+  <!-- Add Node Modal -->
+  <div v-if="showModal" class="modal-overlay">
+      <div class="modal">
+          <h3>添加新家祠</h3>
+          
+          <div class="form-group">
+              <label>名称 (如: 五世祠堂)</label>
+              <input v-model="formData.label" placeholder="请输入名称" />
+          </div>
+          
+          <div class="form-group">
+              <label>标签 (如: 忠贞堂)</label>
+              <input v-model="formData.tag" placeholder="请输入标签" />
+          </div>
+          
+          <div class="form-group">
+              <label>描述 (如: 长子 陈某某)</label>
+              <input v-model="formData.desc" placeholder="请输入描述" />
+          </div>
+          
+          <div class="modal-actions">
+              <button @click="showModal = false" class="btn-cancel">取消</button>
+              <button @click="confirmAddNode" class="btn-confirm">确定</button>
+          </div>
+      </div>
   </div>
 </template>
 
@@ -537,5 +588,82 @@ const addNode = () => {
 
 .btn-bubble.red {
     background: linear-gradient(135deg, #d45d37 0%, #a83d1f 100%);
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modal {
+    background: #fffbf0;
+    padding: 20px;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 320px;
+    border: 2px solid #e6d5b8;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.modal h3 {
+    margin-top: 0;
+    color: #3b2e2a;
+    text-align: center;
+    border-bottom: 1px solid #e6d5b8;
+    padding-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: #8b6b43;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #cba26c;
+    border-radius: 4px;
+    background: #fff;
+    box-sizing: border-box; 
+    /* box-sizing essential because width 100% + padding */
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-cancel, .btn-confirm {
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-cancel {
+    background: #eee;
+    color: #666;
+}
+
+.btn-confirm {
+    background: #cba26c;
+    color: white;
 }
 </style>
